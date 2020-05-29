@@ -41,7 +41,6 @@ DefinitionBlock ("", "DSDT", 2, "MSFT  ", "MSFT    ", 0x00000000)
     External (_PR_.HWPI, IntObj)
     External (_PR_.PDTS, UnknownObj)
     External (_PR_.PKGA, UnknownObj)
-    External (_PR_.PR00, DeviceObj)
     External (_PR_.PR00._PSS, MethodObj)    // 0 Arguments
     External (_PR_.PR00.LPSS, PkgObj)
     External (_PR_.PR00.TPSS, PkgObj)
@@ -60,12 +59,7 @@ DefinitionBlock ("", "DSDT", 2, "MSFT  ", "MSFT    ", 0x00000000)
     External (_SB_._SAN.GENB, DeviceObj)
     External (_SB_._SAN.TEMP, MethodObj)    // 1 Arguments
     External (_SB_.ADP1, DeviceObj)
-    External (_SB_.BAT1, DeviceObj)
-    External (_SB_.BAT2, DeviceObj)
     External (_SB_.IETM, DeviceObj)
-    External (_SB_.LID0, DeviceObj)
-    External (_SB_.LID0.ULID, MethodObj)    // 0 Arguments
-    External (_SB_.PCI0.GFX0, DeviceObj)
     External (_SB_.PCI0.GFX0.ALSI, UnknownObj)
     External (_SB_.PCI0.GFX0.CBLV, UnknownObj)
     External (_SB_.PCI0.GFX0.CDCK, UnknownObj)
@@ -76,22 +70,15 @@ DefinitionBlock ("", "DSDT", 2, "MSFT  ", "MSFT    ", 0x00000000)
     External (_SB_.PCI0.GFX0.GSSE, UnknownObj)
     External (_SB_.PCI0.GFX0.STAT, UnknownObj)
     External (_SB_.PCI0.GFX0.TCHE, UnknownObj)
-    External (_SB_.PCI0.HDAS, DeviceObj)
-    External (_SB_.PCI0.HDAS.PPMS, MethodObj)    // 1 Arguments
     External (_SB_.PCI0.HDAS.PS0X, MethodObj)    // 0 Arguments
     External (_SB_.PCI0.HDAS.PS3X, MethodObj)    // 0 Arguments
     External (_SB_.PCI0.HIDW, MethodObj)    // 4 Arguments
     External (_SB_.PCI0.HIWC, MethodObj)    // 1 Arguments
     External (_SB_.PCI0.LPCB.H_EC.XDAT, MethodObj)    // 0 Arguments
     External (_SB_.PCI0.PAUD.PUAM, MethodObj)    // 0 Arguments
-    External (_SB_.PCI0.PEG0, DeviceObj)
     External (_SB_.PCI0.PEG0.HPME, MethodObj)    // 0 Arguments
-    External (_SB_.PCI0.PEG0.PEGP, DeviceObj)
-    External (_SB_.PCI0.PEG1, DeviceObj)
     External (_SB_.PCI0.PEG1.HPME, MethodObj)    // 0 Arguments
-    External (_SB_.PCI0.PEG2, DeviceObj)
     External (_SB_.PCI0.PEG2.HPME, MethodObj)    // 0 Arguments
-    External (_SB_.PCI0.RP05.MRGT, MethodObj)    // 1 Arguments
     External (_SB_.PCI0.RP05.PWRG, UnknownObj)
     External (_SB_.PCI0.RP05.RSTG, UnknownObj)
     External (_SB_.PCI0.RP05.SCLK, UnknownObj)
@@ -117,13 +104,11 @@ DefinitionBlock ("", "DSDT", 2, "MSFT  ", "MSFT    ", 0x00000000)
     External (_TZ_.TZ00, DeviceObj)
     External (_TZ_.TZ01, DeviceObj)
     External (ALSE, UnknownObj)
-    External (BNUM, UnknownObj)    // Conflicts with a later declaration
     External (BRTL, UnknownObj)
     External (D1F0, UnknownObj)
     External (D1F1, UnknownObj)
     External (D1F2, UnknownObj)
     External (DIDX, UnknownObj)
-    External (EBID, FieldUnitObj)
     External (GSMI, UnknownObj)
     External (IGDS, UnknownObj)
     External (LHIH, UnknownObj)
@@ -13572,7 +13557,6 @@ DefinitionBlock ("", "DSDT", 2, "MSFT  ", "MSFT    ", 0x00000000)
                 ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),
                 Package () {
                     Package () { "port0", "PRT0" },
-                    Package () { "port1", "PRT1" },
                 }
             })
             Name (PRT0, Package () {
@@ -13588,32 +13572,12 @@ DefinitionBlock ("", "DSDT", 2, "MSFT  ", "MSFT    ", 0x00000000)
             Name (EP00, Package() {
                 ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
                 Package () {
+                    Package () { "bus-type", 5 }, // D-PHY
                     Package () { "endpoint", 0 },
                     Package () { "clock-lanes", 0 },
                     Package () { "data-lanes", Package () { 1, 2, 3, 4 } },
                     Package () { "remote-endpoint",
-                        Package() { \_SB.PCI0.I2C2.CAM0, 0, 0 }
-                    },
-                }
-            })
-            NAME (PRT1, Package () {
-                ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
-                Package () {
-                    Package () { "port", 1 }, /* csi 1 */
-                },
-                ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),
-                Package () {
-                    Package () { "endpoint1", "EP10" },
-                }
-            })
-            Name (EP10, Package() {
-                ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
-                Package () {
-                    Package () { "endpoint", 0 },
-                    Package () { "clock-lanes", 0 },
-                    Package () { "data-lanes", Package () { 1, 2 } },
-                    Package () { "remote-endpoint",
-                        Package() { \_SB.PCI0.I2C4.CAM1, 0, 0 }
+                        Package() { \_SB_.PCI0.I2C2.CAMF, 0, 0 }
                     },
                 }
             })
