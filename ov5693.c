@@ -839,6 +839,10 @@ static int ov5693_remove(struct i2c_client *client)
 	return 0;
 }
 
+static const struct media_entity_operations ov5693_entity_ops = {
+	.link_validate = v4l2_subdev_link_validate,
+};
+
 static int ov5693_probe(struct i2c_client *client,
 			const struct i2c_device_id *id)
 {
@@ -862,6 +866,7 @@ static int ov5693_probe(struct i2c_client *client,
 	dev->sd.flags |= V4L2_SUBDEV_FL_HAS_DEVNODE;
 	dev->format.code = MEDIA_BUS_FMT_SBGGR10_1X10;
 	dev->sd.entity.function = MEDIA_ENT_F_CAM_SENSOR;
+	dev->sd.entity.ops = ov5693_entity_ops;
 	ret =
 		v4l2_ctrl_handler_init(&dev->ctrl_handler,
 				   ARRAY_SIZE(ov5693_controls));
