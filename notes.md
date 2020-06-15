@@ -48,3 +48,7 @@ drivers for each.
 ```
 make -j`nproc` -C /lib/modules/5.6.14-surface/build M=/home/jorhand/code/linux/drivers/media/i2c modules
 ```
+
+# Patches I have appplied to my kernel tree
+* [`graph_` callbacks for swnode](
+    https://lore.kernel.org/linux-media/20200526143110.GC3284396@kuha.fi.intel.com/2-0001-software-node-Add-support-for-fwnode_graph-family-of.patch)
