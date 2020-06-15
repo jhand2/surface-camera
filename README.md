@@ -35,3 +35,8 @@ git://git.ideasonboard.org/yavta.git.
 Currently this script hangs on the final command because no image buffers
 are supplied. For better troubleshooting, I recommend running the last command
 under strace.
+
+Prior to running the script, you will need to insert the `surface_camera` kernel
+module as auto-loading is currently not working.
+
+`sudo insmod /lib/modules/$(uname -r)/kernel/drivers/platform/x86/surface_camera.ko`
