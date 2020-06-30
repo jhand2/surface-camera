@@ -1,4 +1,4 @@
-From d9f8501bbc01c595e1076054d27e74a8d4ab414d Mon Sep 17 00:00:00 2001
+From 3b612c7ff95203da3a9a79f39f0ee0c790e4f3c1 Mon Sep 17 00:00:00 2001
 From: Jordan Hand <jorhand@microsoft.com>
 Date: Tue, 26 May 2020 08:17:23 -0700
 Subject: [PATCH 4/5] Add ov5693 camera driver
@@ -17,9 +17,9 @@ I intend to come back to these once I have the camera working end-to end
 Signed-off-by: Jordan Hand <jorhand@linux.microsoft.com>
 ---
  drivers/media/i2c/Makefile |    9 +-
- drivers/media/i2c/ov5693.c |  735 ++++++++++++++++++++
- drivers/media/i2c/ov5693.h | 1353 ++++++++++++++++++++++++++++++++++++
- 3 files changed, 2093 insertions(+), 4 deletions(-)
+ drivers/media/i2c/ov5693.c |  738 ++++++++++++++++++++
+ drivers/media/i2c/ov5693.h | 1354 ++++++++++++++++++++++++++++++++++++
+ 3 files changed, 2097 insertions(+), 4 deletions(-)
  create mode 100644 drivers/media/i2c/ov5693.c
  create mode 100644 drivers/media/i2c/ov5693.h
 
@@ -52,10 +52,10 @@ index c147bb9d28db..fd2536741f89 100644
  obj-$(CONFIG_VIDEO_OV6650) += ov6650.o
 diff --git a/drivers/media/i2c/ov5693.c b/drivers/media/i2c/ov5693.c
 new file mode 100644
-index 000000000000..62b04b2369b6
+index 000000000000..5df06e196548
 --- /dev/null
 +++ b/drivers/media/i2c/ov5693.c
-@@ -0,0 +1,735 @@
+@@ -0,0 +1,738 @@
 +// SPDX-License-Identifier: GPL-2.0
 +// Copyright (c) 2019 Intel Corporation.
 +
@@ -358,11 +358,11 @@ index 000000000000..62b04b2369b6
 +	// registers are volatile. I guess the CHIP ID is non-volatile
 +	// though...
 +	// Some of these registers seem to be set in global settings?
-+	ret = ov5693_write_reg_array(client, ov5693_pll_config);
-+	if (ret) {
-+		dev_err(&client->dev, "%s failed to set pll config\n", __func__);
-+		return ret;
-+	}
++	/*ret = ov5693_write_reg_array(client, ov5693_pll_config);*/
++	/*if (ret) {*/
++		/*dev_err(&client->dev, "%s failed to set pll config\n", __func__);*/
++		/*return ret;*/
++	/*}*/
 +
 +	/* Apply default values of current mode */
 +	ret = ov5693_write_reg_array(client, dev->curr_mode->regs);
@@ -384,8 +384,6 @@ index 000000000000..62b04b2369b6
 +		dev_err(&client->dev, "Failed to get stream\n");
 +		return ret;
 +	}
-+
-+	printk("========== Mode: %hu\n", stream);
 +
 +	return 0;
 +}
@@ -570,11 +568,16 @@ index 000000000000..62b04b2369b6
 +		return -EINVAL;
 +	}
 +
++	gpiod_set_value_cansleep(ov5693->xshutdn, 0);
++	gpiod_set_value_cansleep(ov5693->pwdnb, 0);
++
 +	ret = regulator_bulk_enable(OV5693_NUM_SUPPLIES, ov5693->supplies);
 +	if (ret) {
 +		dev_err(&client->dev, "Failed to enable regulators\n");
 +		return ret;
 +	}
++
++	gpiod_set_value_cansleep(ov5693->xshutdn, 0);
 +
 +	/* according to DS, at least 5ms is needed between DOVDD and PWDN */
 +	/* add this delay time to 10~11ms*/
@@ -614,10 +617,10 @@ index 000000000000..62b04b2369b6
 +}
 +
 +// TODO: Put these in header?
-+#define OV5693_PIXEL_RATE			(45 * 1000 * 1000 * 4)
-+#define OV5693_LINK_FREQ_420MHZ		420000000
++#define OV5693_LINK_FREQ_19MHZ		19200000
++#define OV5693_PIXEL_RATE			(OV5693_LINK_FREQ_19MHZ * 2 * 2) / 10
 +static const s64 link_freq_menu_items[] = {
-+	OV5693_LINK_FREQ_420MHZ
++	OV5693_LINK_FREQ_19MHZ
 +};
 +
 +/**
@@ -793,10 +796,10 @@ index 000000000000..62b04b2369b6
 +MODULE_LICENSE("GPL");
 diff --git a/drivers/media/i2c/ov5693.h b/drivers/media/i2c/ov5693.h
 new file mode 100644
-index 000000000000..96443cffe2db
+index 000000000000..8ecfabc0eb2f
 --- /dev/null
 +++ b/drivers/media/i2c/ov5693.h
-@@ -0,0 +1,1353 @@
+@@ -0,0 +1,1354 @@
 +#ifndef __DRIVERS_MEDIA_I2C_OV5693_H__
 +#define __DRIVERS_MEDIA_I2C_OV5693_H__
 +
@@ -992,6 +995,7 @@ index 000000000000..96443cffe2db
 +
 +	struct regulator_bulk_data supplies[OV5693_NUM_SUPPLIES];
 +	struct ov5693_resolution *curr_mode;
++	struct clk *xvclk;
 +};
 +
 +enum ov5693_tok_type {

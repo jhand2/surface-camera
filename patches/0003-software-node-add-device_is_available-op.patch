@@ -1,4 +1,4 @@
-From 8136b4e4e4e02fccc38b752df0f9bfd483ffa460 Mon Sep 17 00:00:00 2001
+From d8344d83d68c086458a8914c9583147894322cba Mon Sep 17 00:00:00 2001
 From: Jordan Hand <jorhand@linux.microsoft.com>
 Date: Sun, 14 Jun 2020 19:20:28 -0700
 Subject: [PATCH 3/5] software node: add device_is_available op
@@ -12,14 +12,14 @@ Signed-off-by: Jordan Hand <jorhand@linux.microsoft.com>
  1 file changed, 7 insertions(+)
 
 diff --git a/drivers/base/swnode.c b/drivers/base/swnode.c
-index 68d3d395b294..291bdb08eba2 100644
+index 68d3d395b294..1edaab1e6dce 100644
 --- a/drivers/base/swnode.c
 +++ b/drivers/base/swnode.c
 @@ -363,6 +363,12 @@ static void software_node_put(struct fwnode_handle *fwnode)
  	kobject_put(&swnode->kobj);
  }
  
-+static bool software_node_device_is_available(struct fwnode_handle *fwnode)
++static bool software_node_device_is_available(const struct fwnode_handle *fwnode)
 +{
 +	// TODO: Is there any intelligent checking we can do here?
 +	return true;
@@ -32,7 +32,7 @@ index 68d3d395b294..291bdb08eba2 100644
  static const struct fwnode_operations software_node_ops = {
  	.get = software_node_get,
  	.put = software_node_put,
-+	.device_is_available = software_node_device_is_available
++	.device_is_available = software_node_device_is_available,
  	.property_present = software_node_property_present,
  	.property_read_int_array = software_node_read_int_array,
  	.property_read_string_array = software_node_read_string_array,

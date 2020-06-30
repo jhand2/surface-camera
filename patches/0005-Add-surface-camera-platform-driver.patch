@@ -1,4 +1,4 @@
-From 7d2db7a77cbbb6ad8af2b9f0e2327cc8ef72a049 Mon Sep 17 00:00:00 2001
+From 5c428adc2b75c3f4d195b7c7b83b0ec02b687412 Mon Sep 17 00:00:00 2001
 From: Jordan Hand <jorhand@linux.microsoft.com>
 Date: Sun, 14 Jun 2020 19:03:29 -0700
 Subject: [PATCH 5/5] Add surface camera platform driver
@@ -16,8 +16,8 @@ guess and they currently do not work.
 Signed-off-by: Jordan Hand <jorhand@linux.microsoft.com>
 ---
  drivers/platform/x86/Makefile         |   1 +
- drivers/platform/x86/surface_camera.c | 160 ++++++++++++++++++++++++++
- 2 files changed, 161 insertions(+)
+ drivers/platform/x86/surface_camera.c | 162 ++++++++++++++++++++++++++
+ 2 files changed, 163 insertions(+)
  create mode 100644 drivers/platform/x86/surface_camera.c
 
 diff --git a/drivers/platform/x86/Makefile b/drivers/platform/x86/Makefile
@@ -34,10 +34,10 @@ index 7329298fd584..becb682b86b7 100644
  obj-$(CONFIG_INTEL_TELEMETRY)	+= intel_telemetry_core.o \
 diff --git a/drivers/platform/x86/surface_camera.c b/drivers/platform/x86/surface_camera.c
 new file mode 100644
-index 000000000000..7a297b227f9f
+index 000000000000..84c80a4fd0b1
 --- /dev/null
 +++ b/drivers/platform/x86/surface_camera.c
-@@ -0,0 +1,160 @@
+@@ -0,0 +1,162 @@
 +#include <linux/acpi.h>
 +#include <linux/device.h>
 +#include <linux/fwnode.h>
@@ -70,6 +70,8 @@ index 000000000000..7a297b227f9f
 +
 +u32 camf_data_lanes[2] = {1, 2};
 +
++// Values retrieved from SSDB on Surface Book 2. We could probably
++// query this from acpi instead.
 +static const struct property_entry ov5693_props[] = {
 +	PROPERTY_ENTRY_U32("bus-type", 5), // D-PHY
 +	PROPERTY_ENTRY_U32("clock-lanes", 0),
@@ -88,7 +90,7 @@ index 000000000000..7a297b227f9f
 +	{ "port0", &nodes[0] },
 +	{ "endpoint0", &nodes[1], ov5693_props },
 +	{ SURFACE_CIO2_HID },
-+	{ "port0", &nodes[3] },
++	{ "port1", &nodes[3] },
 +	{ "endpoint0", &nodes[4], cio2_props },
 +	{ }
 +};
